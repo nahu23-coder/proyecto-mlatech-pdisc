@@ -96,3 +96,10 @@ El objetivo es comprender cómo se organiza un proyecto PHP con separación de v
 
 - El flujo de la aplicación está pensado para que primero se entienda la separación entre vista, controlador y configuración.
 - Los datos sensibles deben guardarse en `.env`, nunca en el repositorio.
+
+Miembros del grupo:
+-Cudero Nahuel
+-Farias Thiago
+-Maric Tiziano
+-Sanchez Esteban
+-Vera Xiomara
