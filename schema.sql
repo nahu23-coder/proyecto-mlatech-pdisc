@@ -1,6 +1,6 @@
-CREATE DATABASE pdi_base;
+CREATE DATABASE mlatech;
 
-USE pdi_base;
+USE mlatech;
 
 CREATE TABLE IF NOT EXISTS users (
     id         CHAR(36)     NOT NULL DEFAULT (UUID()),
