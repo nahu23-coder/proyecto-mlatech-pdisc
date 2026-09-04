@@ -51,8 +51,7 @@ try{
   // Paso #6: Dar acceso --------------------------
   session_start();
 
-    $_SESSION['usuario_id'] = $usuario['id'];
-    $_SESSION['usuario_email'] = $usuario['email'];
+   $_SESSION['user'] = $usuario['id'];
 
     header('Location: /src/views/index.php');
     exit;
