@@ -43,7 +43,7 @@ if ($data['repeatPassword'] === '') {
 if (!empty($errores)) {
     $_SESSION['errores'] = $errores;
     header('Location: /src/views/auth/register.php');
-    exit;
+    exit;♦
 }
 
 // Validaciones básicas
