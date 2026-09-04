@@ -12,8 +12,39 @@ $data = [
   'email'           => trim($_POST['email'] ?? ''), // trim(str) saca los espacios al inicio y al final
   'name'            => trim($_POST['name'] ?? ''),
   'password'        => $_POST['password'] ?? '',
-  'repeatPassword'  => $_POST['password'] ?? ''
+  'repeatPassword'  => $_POST['password_confirm'] ?? ''
 ];
+
+$errores = [];
+
+if ($data['name'] === '') {
+    $errores[] = 'El nombre es obligatorio.';
+}
+
+if ($data['email'] === '') {
+    $errores[] = 'El email es obligatorio.';
+} elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+    $errores[] = 'El email no tiene un formato válido.';
+}
+
+if ($data['password'] === '') {
+    $errores[] = 'La contraseña es obligatoria.';
+} elseif (strlen($data['password']) < 6) {
+    $errores[] = 'La contraseña debe tener al menos 6 caracteres.';
+}
+
+if ($data['repeatPassword'] === '') {
+    $errores[] = 'Debes repetir la contraseña.';
+} elseif ($data['password'] !== $data['repeatPassword']) {
+    $errores[] = 'Las contraseñas no coinciden.';
+}
+
+// Si hay errores, volvemos al registro
+if (!empty($errores)) {
+    $_SESSION['errores'] = $errores;
+    header('Location: /src/views/auth/register.php');
+    exit;
+}
 
 // Validaciones básicas
 // ...
