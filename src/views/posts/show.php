@@ -17,7 +17,7 @@ include(__DIR__ . '/../_layouts/layout.php');
       <div class="card-body">
         <div class="row">
           <div class="col">
-            <h2 class="card-title"><?= $post['title'] ?></h2>
+            <h2 class="card-title"><?= $post['name'] ?></h2>
           </div>
           <?php if (isset($_SESSION['user']) && $_SESSION['user']['id'] === $post['user_id']): ?>
             <div class="col d-flex justify-content-end align-items-center">
@@ -28,7 +28,7 @@ include(__DIR__ . '/../_layouts/layout.php');
         </div>
 
         
-        <p class="card-text"><?= nl2br($post['content']) ?></p>
+        <p class="card-text"><?= nl2br($post['description']) ?></p>
         <p class="card-text"><strong>Autor:</strong> <?= $post['user_name'] ?></p>
         <p class="text-muted">Publicado el <?= $post['created_at'] ?></p>
       </div>
