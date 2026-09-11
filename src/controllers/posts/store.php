@@ -10,7 +10,7 @@ try {
     $stmt->execute([
         'title' => $_POST['title'],
         'content' => $_POST['content'],
-        'user_id' => $_SESSION['user']['id'],
+        'user_id' => $_SESSION['user'],
     ]);
 
     header('Location: /src/controllers/posts/index.php');
