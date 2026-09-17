@@ -39,11 +39,13 @@ include('../_layouts/auth.layout.php');
     <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" required>
   </div>
 
-  <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+  <button type="submit" class="btn btn-accent w-100">Registrarme</button>
 </form>
 
 <br />
 
 <div class="text-center">
-  <p class="text-muted small">¿Ya tenés una cuenta? <a href="/src/views/auth/login.php">¡Inicia sesión!</a></p>
+  <p class="text-secondary small">¿Ya tenés una cuenta? <a href="/src/views/auth/login.php">¡Inicia sesión!</a></p>
 </div>
+
+<?php include('../_layouts/auth.footer.php'); ?>
