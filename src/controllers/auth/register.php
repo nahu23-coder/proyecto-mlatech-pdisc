@@ -12,7 +12,7 @@ $data = [
   'email'           => trim($_POST['email'] ?? ''), // trim(str) saca los espacios al inicio y al final
   'name'            => trim($_POST['name'] ?? ''),
   'password'        => $_POST['password'] ?? '',
-  'repeatPassword'  => $_POST['password_confirm'] ?? ''
+  'repeatPassword'  => $_POST['repeatPassword'] ?? ''
 ];
 
 $errores = [];
@@ -43,7 +43,7 @@ if ($data['repeatPassword'] === '') {
 if (!empty($errores)) {
     $_SESSION['errores'] = $errores;
     header('Location: /src/views/auth/register.php');
-    exit;♦
+    exit;
 }
 
 // Validaciones básicas
