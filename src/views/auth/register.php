@@ -3,8 +3,19 @@ include('../_layouts/auth.layout.php');
 ?>
 
 <div class="text-center mb-4">
-  <div class="auth-logo mb-2">MLA <span class="brand-accent">TECH</span></div>
-  <p class="text-secondary small">Creá tu cuenta</p>
+  <?php if (!empty($_SESSION['errores'])): ?>
+  <div class="alert alert-danger">
+    <ul class="mb-0">
+      <?php foreach ($_SESSION['errores'] as $error): ?>
+        <li><?= $error ?></li>
+      <?php endforeach; ?>
+    </ul>
+  </div>
+  <?php unset($_SESSION['errores']); ?>
+<?php endif; ?>
+  <img src="/assets/img/php-logo.png" alt="Logo" width="60" class="mb-2">
+  <h1 class="h4 mb-0">PDISC</h1>
+  <p class="text-muted small">Creá cuenta</p>
 </div>
 
 <form action="/src/controllers/auth/register.php" method="POST">

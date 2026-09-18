@@ -12,7 +12,7 @@ $data = [
   'email'           => trim($_POST['email'] ?? ''), // trim(str) saca los espacios al inicio y al final
   'name'            => trim($_POST['name'] ?? ''),
   'password'        => $_POST['password'] ?? '',
-  'repeatPassword'  => $_POST['password_confirm'] ?? ''
+  'repeatPassword'  => $_POST['repeatPassword'] ?? ''
 ];
 
 $errores = [];
