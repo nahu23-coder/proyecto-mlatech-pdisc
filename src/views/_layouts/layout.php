@@ -44,7 +44,7 @@ function logout() {
             <a class="nav-link" href="#categorias">Categorías</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/src/views/posts/index.php">Productos</a>
+            <a class="nav-link" href="/src/controllers/products/index.php">Productos</a>
           </li>
         </ul>
 
