@@ -1,5 +1,5 @@
 <?php
-require_once 'src/config/bootstrap.php';
+/** Punto de entrada público: redirige a la home privada (que pide login si hace falta). */
+require_once __DIR__ . '/src/config/bootstrap.php';
 
-header('Location: src/views/index.php');
-exit;
+redirect('/src/views/index.php');
