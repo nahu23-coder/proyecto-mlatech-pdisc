@@ -1,25 +1,34 @@
 <?php
-$env = parse_ini_file(__DIR__ . '/../../.env');
+/**
+ * Conexión PDO. Deja disponible la variable global $pdo.
+ * Las credenciales salen del .env; los errores técnicos se registran en el log
+ * y nunca se muestran al usuario (podrían revelar host, usuario o estructura).
+ */
+require_once __DIR__ . '/env.php';
 
-# Valores de la conexión, los saca del archivo '.env'
-$host    = $env['DB_HOST'];
-$db      = $env['DB_NAME'];
-$user    = $env['DB_USER'];
-$pass    = $env['DB_PASS'];
-$charset = $env['DB_CHARSET'] ?? 'utf8mb4';
+$dbName = env('DB_NAME');
+if ($dbName === null) {
+    error_log('[db] Falta DB_NAME en el .env');
+    http_response_code(500);
+    exit('Error de configuración del servidor.');
+}
 
-# Data Source Name (DSN) especifica el driver (mysql), host, database, y el charset
-# No es más que un string que se usa al crear la conexión (linea 21)
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
+$dsn = sprintf(
+    'mysql:host=%s;port=%s;dbname=%s;charset=%s',
+    env('DB_HOST', 'localhost'),
+    env('DB_PORT', '3306'),
+    $dbName,
+    env('DB_CHARSET', 'utf8mb4')
+);
 
 try {
-     $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (\PDOException $e) {
-     die("La conexión a la base de datos falló: " . $e->getMessage());
+    $pdo = new PDO($dsn, env('DB_USER', 'root'), env('DB_PASS', ''), [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false, // prepared statements reales del motor
+    ]);
+} catch (PDOException $e) {
+    error_log('[db] Conexión fallida: ' . $e->getMessage());
+    http_response_code(500);
+    exit('No pudimos conectar con la base de datos. Intentá de nuevo más tarde.');
 }
-?>
