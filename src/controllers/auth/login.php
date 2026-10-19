@@ -1,64 +1,62 @@
 <?php
-// Paso clave #1: Validar tipo de solicitud ----------------------
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {  // Si la solicitud no es POST, volves al login
-  header('Location: /src/views/auth/login.php');
-  exit;
+/**
+ * Login: valida credenciales y abre la sesión.
+ *
+ * Seguridad aplicada:
+ *  - Solo POST + token CSRF.
+ *  - Consulta preparada (sin inyección SQL).
+ *  - Mensaje de error genérico (no revela si el email existe) y verificación a tiempo
+ *    constante aunque el usuario no exista (evita enumeración por tiempos).
+ *  - Límite de intentos por sesión y regeneración del ID de sesión al entrar.
+ */
+require_once __DIR__ . '/../../config/bootstrap.php';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    redirect('/src/views/auth/login.php');
+}
+csrf_require(false, '/src/views/auth/login.php');
+
+$email    = input_string($_POST, 'email', 150);
+$password = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
+
+// Hash descartable: se compara contra él cuando el email no existe.
+const DUMMY_HASH = '$2y$10$2BdCAbDxok8Dg.DbwwDIfOO.FkWmvydj8vTbwd58rGrFrFbXZ1SPq';
+
+$fail = function ($message) use ($email) {
+    flash_set('errors', [$message]);
+    flash_set('old', ['email' => $email]);
+    redirect('/src/views/auth/login.php');
+};
+
+if (!rate_limit_allow('login', config('auth.login_attempts'), config('auth.login_window'))) {
+    $fail('Demasiados intentos. Esperá unos minutos e intentá de nuevo.');
 }
 
-// Paso clave #2: Tomar datos -----------------------------------
-$data = [
-  'email'           => trim($_POST['email'] ?? ''), // trim(str) saca los espacios al inicio y al final
-  'password'        => $_POST['password'] ?? ''
-];
-
-try{
-  // Paso #5: Conexion a la DB
-   $conexion = new PDO(
-        "mysql:host=localhost;dbname=mlatech;charset=utf8",
-        "root",
-        ""
-    );
-
-    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (Exception $a){
-  echo "Error en la conexion con la DB";
+if ($email === '' || $password === '' || strlen($password) > 1024) {
+    $fail('Ingresá tu email y tu contraseña.');
 }
 
-try{
-  // Paso #4: Verificar si existe el usuario -------------------
-   $sql = "SELECT * FROM users WHERE email = :email LIMIT 1";
+try {
+    $stmt = $pdo->prepare('SELECT id, name, password FROM users WHERE email = :email LIMIT 1');
+    $stmt->execute([':email' => $email]);
+    $user = $stmt->fetch();
 
-    $stmt = $conexion->prepare($sql);
-    $stmt->execute([
-        ':email' => $data['email']
-    ]);
+    $hash  = $user ? $user['password'] : DUMMY_HASH;
+    $valid = password_verify($password, $hash) && $user;
 
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$usuario) {
-        echo "El usuario no existe.";
-        exit;
+    if (!$valid) {
+        $fail('Email o contraseña incorrectos.');
     }
 
-
-  // Paso #5: Verificar si la contraseña es correcta -------------------
-    
-    if(!password_verify($data['password'], $usuario['password'])){
-      echo "La contraseña es incorrecta.";
-        exit;
+    // Si PHP mejoró el algoritmo/costo por defecto, actualizamos el hash guardado.
+    if (password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
+        $upd = $pdo->prepare('UPDATE users SET password = :p WHERE id = :id');
+        $upd->execute([':p' => password_hash($password, PASSWORD_DEFAULT), ':id' => $user['id']]);
     }
 
-  // Paso #6: Dar acceso --------------------------
-  session_start();
-
-   $_SESSION['user'] = $usuario['id'];
-
-    header('Location: /src/views/index.php');
-    exit;
-
-} catch (Exception $e) {
-
-    echo "Ocurrió un error: " . $e->getMessage();
-
+    login_user($user);
+    redirect('/src/views/index.php');
+} catch (PDOException $e) {
+    error_log('[login] ' . $e->getMessage());
+    $fail('Ocurrió un error. Intentá de nuevo en unos minutos.');
 }
-?>

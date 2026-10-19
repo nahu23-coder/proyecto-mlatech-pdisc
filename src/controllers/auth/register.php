@@ -1,81 +1,72 @@
 <?php
+/**
+ * Registro de usuario.
+ *
+ * - Valida y sanea cada campo en el servidor (el HTML "required" no alcanza).
+ * - La contraseña se guarda con password_hash (bcrypt), nunca en texto plano.
+ * - El email duplicado se detecta por la restricción UNIQUE de la base (código 1062),
+ *   lo cual es seguro ante registros simultáneos (no hay "check y después insert").
+ */
 require_once __DIR__ . '/../../config/bootstrap.php';
 
-// Paso clave #1: Validar tipo de solicitud ----------------------
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {  // Si la solicitud no es POST, volves al register
-  header('Location: /src/views/auth/register.php');
-  exit;
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    redirect('/src/views/auth/register.php');
+}
+csrf_require(false, '/src/views/auth/register.php');
+
+$name           = input_string($_POST, 'name', 50);
+$email          = input_string($_POST, 'email', 150);
+$password       = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
+$repeatPassword = is_string($_POST['repeatPassword'] ?? null) ? $_POST['repeatPassword'] : '';
+
+$min = config('auth.password_min');
+$max = config('auth.password_max');
+
+$errors = [];
+
+if (mb_strlen($name) < 2) {
+    $errors[] = 'El nombre es obligatorio (mínimo 2 caracteres).';
+}
+if ($email === '') {
+    $errors[] = 'El email es obligatorio.';
+} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errors[] = 'El email no tiene un formato válido.';
+}
+if (strlen($password) < $min) {
+    $errors[] = "La contraseña debe tener al menos $min caracteres.";
+} elseif (strlen($password) > $max) {
+    $errors[] = "La contraseña no puede superar los $max caracteres.";
+}
+if ($password !== $repeatPassword) {
+    $errors[] = 'Las contraseñas no coinciden.';
 }
 
-// Paso clave #2: Tomar datos -----------------------------------
-$data = [
-  'email'           => trim($_POST['email'] ?? ''), // trim(str) saca los espacios al inicio y al final
-  'name'            => trim($_POST['name'] ?? ''),
-  'password'        => $_POST['password'] ?? '',
-  'repeatPassword'  => $_POST['repeatPassword'] ?? ''
-];
-
-$errores = [];
-
-if ($data['name'] === '') {
-    $errores[] = 'El nombre es obligatorio.';
+if ($errors) {
+    flash_set('errors', $errors);
+    flash_set('old', ['name' => $name, 'email' => $email]); // nunca se devuelve la contraseña
+    redirect('/src/views/auth/register.php');
 }
 
-if ($data['email'] === '') {
-    $errores[] = 'El email es obligatorio.';
-} elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-    $errores[] = 'El email no tiene un formato válido.';
-}
-
-if ($data['password'] === '') {
-    $errores[] = 'La contraseña es obligatoria.';
-} elseif (strlen($data['password']) < 6) {
-    $errores[] = 'La contraseña debe tener al menos 6 caracteres.';
-}
-
-if ($data['repeatPassword'] === '') {
-    $errores[] = 'Debes repetir la contraseña.';
-} elseif ($data['password'] !== $data['repeatPassword']) {
-    $errores[] = 'Las contraseñas no coinciden.';
-}
-
-// Si hay errores, volvemos al registro
-if (!empty($errores)) {
-    $_SESSION['errores'] = $errores;
-    header('Location: /src/views/auth/register.php');
-    exit;
-}
-
-// Validaciones básicas
-// ...
-
-// Paso clave #3: Hacer cosas ----------------------------------
 try {
-  // Validamos que el usuario no exista
-  // ...
+    $userId = uuid_v4(); // la tabla usa UUID: lastInsertId() devolvería 0, por eso lo generamos acá
 
+    $stmt = $pdo->prepare('INSERT INTO users (id, name, email, password) VALUES (:id, :name, :email, :password)');
+    $stmt->execute([
+        ':id'       => $userId,
+        ':name'     => $name,
+        ':email'    => $email,
+        ':password' => password_hash($password, PASSWORD_DEFAULT),
+    ]);
 
-  // Hasheamos la contraseña, nunca se guarda en texto plano
-  $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-
-  // Insertamos en DB
-  $stmt = $pdo->prepare('INSERT INTO users (name, email, password) VALUES (:name, :email, :password)');
-  $stmt->execute([
-    'name'     => $data['name'],
-    'email'    => $data['email'],
-    'password' => $hashedPassword,
-  ]);
-
-  // Cargamos $_SESSION['user'], para poder pasar al index
-  $_SESSION['user'] = [
-    'id'    => $pdo->lastInsertId(),
-    'name'  => $data['name'],
-    'email' => $data['email'],
-  ];
-
-  // Pateado para el index
-  header('Location: /src/views/index.php');
-  exit;
+    login_user(['id' => $userId, 'name' => $name]);
+    redirect('/src/views/index.php');
 } catch (PDOException $e) {
-  exit;
+    $duplicate = isset($e->errorInfo[1]) && (int) $e->errorInfo[1] === 1062;
+    if (!$duplicate) {
+        error_log('[register] ' . $e->getMessage());
+    }
+
+    flash_set('errors', [$duplicate ? 'Ese email ya está registrado.' : 'No pudimos crear la cuenta. Intentá de nuevo.']);
+    flash_set('old', ['name' => $name, 'email' => $email]);
+    redirect('/src/views/auth/register.php');
 }

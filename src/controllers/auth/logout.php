@@ -1,25 +1,13 @@
 <?php
+/**
+ * Cierre de sesión. Solo POST + CSRF (un simple <img src="logout.php"> de un sitio
+ * ajeno no puede desloguear al usuario).
+ */
 require_once __DIR__ . '/../../config/bootstrap.php';
- 
-// Vaciamos los datos de la sesión
-$_SESSION = [];
- 
-// Borramos la cookie
-if (ini_get('session.use_cookies')) {
-    $params = session_get_cookie_params();
-    setcookie(
-        session_name(),
-        '',
-        time() - 42000,
-        $params['path'],
-        $params['domain'],
-        $params['secure'],
-        $params['httponly']
-    );
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf_valid()) {
+    logout_user();
+    redirect('/src/views/auth/login.php');
 }
- 
-// Destruimos la sesión en el servidor
-session_destroy();
- 
-header('Location: /src/views/auth/login.php');
-exit;
+
+redirect('/src/views/index.php');

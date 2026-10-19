@@ -1,0 +1,461 @@
+/* =========================================================
+   MLA TECH · Theme
+   Estilos propios sobre Bootstrap 5.3 (modo oscuro nativo).
+   Paleta: negro + dorado.
+   ========================================================= */
+
+:root {
+  --bs-primary: #d4af37;
+  --bs-primary-rgb: 212, 175, 55;
+  --bs-link-color: #d4af37;
+  --bs-link-hover-color: #e8c96a;
+  --bs-body-bg: #0a0a0a;
+  --bs-body-bg-rgb: 10, 10, 10;
+  --bs-tertiary-bg: #141414;
+
+  --brand-accent: #d4af37;
+  --brand-accent-rgb: 212, 175, 55;
+  --brand-accent-hover: #b8952b;
+}
+
+body {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+.card {
+  background-color: #141414;
+  border-color: rgba(212, 175, 55, .15);
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+  background-color: #000 !important;
+  border-bottom: 1px solid rgba(212, 175, 55, .25) !important;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: .5px;
+  font-size: 1.3rem;
+  color: #fff !important;
+}
+
+.navbar-brand img {
+  height: 34px;
+  margin-right: .4rem;
+}
+
+.navbar-brand .brand-accent {
+  color: var(--brand-accent);
+}
+
+.navbar .nav-link {
+  font-weight: 500;
+  color: #e8e8e8 !important;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  color: var(--brand-accent) !important;
+}
+
+.navbar .form-control {
+  background-color: #141414;
+  border-color: rgba(212, 175, 55, .25);
+  color: #fff;
+}
+
+/* ---------- Botón de acento (CTA) ---------- */
+.btn-accent {
+  background-color: var(--brand-accent);
+  border-color: var(--brand-accent);
+  color: #000;
+  font-weight: 600;
+}
+
+.btn-accent:hover,
+.btn-accent:focus {
+  background-color: var(--brand-accent-hover);
+  border-color: var(--brand-accent-hover);
+  color: #000;
+}
+
+.btn-outline-accent {
+  border-color: var(--brand-accent);
+  color: var(--brand-accent);
+}
+
+.btn-outline-accent:hover {
+  background-color: var(--brand-accent);
+  color: #000;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  border-radius: .75rem;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, .25);
+}
+
+.hero img {
+  width: 100%;
+  display: block;
+}
+
+.hero-caption {
+  padding: 2rem;
+  background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+  border-top: 1px solid rgba(212, 175, 55, .25);
+}
+
+.hero-caption h1 {
+  font-weight: 700;
+}
+
+.hero-caption .lead {
+  max-width: 40rem;
+}
+
+/* ---------- Tarjetas de categorías / filtros ---------- */
+.category-card,
+.product-card {
+  border: 1px solid rgba(212, 175, 55, .15);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  height: 100%;
+  cursor: pointer;
+}
+
+.category-card:hover,
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 .75rem 1.25rem rgba(0, 0, 0, .6);
+  border-color: rgba(212, 175, 55, .6);
+}
+
+.category-card {
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+
+.category-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  display: block;
+  margin-bottom: .5rem;
+}
+
+.filter-chip {
+  border: 1px solid rgba(212, 175, 55, .35);
+  color: #e8e8e8;
+  background: transparent;
+}
+
+.filter-chip.active,
+.filter-chip:hover {
+  background-color: var(--brand-accent);
+  border-color: var(--brand-accent);
+  color: #000;
+}
+
+/* ---------- Productos ---------- */
+.product-thumb {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  background: rgba(212, 175, 55, .05);
+  border-bottom: 1px solid rgba(212, 175, 55, .15);
+  border-radius: var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius) 0 0;
+  overflow: hidden;
+}
+
+/* Con foto: fondo blanco (las fotos de producto vienen con fondo blanco) y la foto
+   entera, centrada y con aire alrededor, sin recortarse */
+.product-thumb.has-image {
+  background: #fff;
+  padding: .75rem;
+}
+
+.product-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Miniatura del carrito */
+.cart-thumb {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: .5rem;
+  overflow: hidden;
+  background: #fff;
+  font-size: 1.75rem;
+}
+
+.cart-thumb.no-image {
+  background: rgba(212, 175, 55, .08);
+}
+
+.cart-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.price {
+  color: var(--brand-accent);
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.badge-stock {
+  background-color: rgba(212, 175, 55, .15);
+  color: var(--brand-accent);
+  font-weight: 500;
+}
+
+/* ---------- Sección "por qué elegirnos" ---------- */
+.feature-icon {
+  font-size: 2rem;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  border-top: 1px solid rgba(212, 175, 55, .25);
+  background-color: #000;
+  margin-top: 3.5rem;
+  padding: 2rem 0;
+}
+
+/* ---------- Auth (login / registro) ---------- */
+.auth-wrapper {
+  background: radial-gradient(circle at top left, #141414, #000 70%);
+  min-height: 100vh;
+}
+
+.auth-card {
+  border: 1px solid rgba(212, 175, 55, .2);
+}
+
+.auth-logo {
+  font-size: 1.8rem;
+}
+
+.auth-logo img {
+  height: 40px;
+}
+
+/* ---------- Chat de soporte (widget flotante) ---------- */
+#ai-chat-toggle {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background-color: var(--brand-accent);
+  color: #000;
+  border: none;
+  font-size: 1.5rem;
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .5);
+  z-index: 1050;
+}
+
+#ai-chat-window {
+  position: fixed;
+  bottom: 5.5rem;
+  right: 1.5rem;
+  width: 320px;
+  max-height: 440px;
+  background-color: #141414;
+  border: 1px solid rgba(212, 175, 55, .35);
+  border-radius: .75rem;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, .6);
+  display: none;
+  flex-direction: column;
+  z-index: 1050;
+  overflow: hidden;
+}
+
+#ai-chat-window.open {
+  display: flex;
+}
+
+#ai-chat-header {
+  background-color: #000;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid rgba(212, 175, 55, .25);
+  font-weight: 600;
+}
+
+#ai-chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: .75rem;
+  font-size: .875rem;
+}
+
+.chat-msg {
+  margin-bottom: .5rem;
+  padding: .5rem .75rem;
+  border-radius: .5rem;
+  max-width: 85%;
+}
+
+.chat-msg.bot {
+  background-color: rgba(212, 175, 55, .12);
+  margin-right: auto;
+}
+
+.chat-msg.user {
+  background-color: var(--brand-accent);
+  color: #000;
+  margin-left: auto;
+}
+
+#ai-chat-form {
+  display: flex;
+  border-top: 1px solid rgba(212, 175, 55, .25);
+}
+
+#ai-chat-form input {
+  border: none;
+  background: transparent;
+  color: #fff;
+  flex: 1;
+  padding: .6rem .75rem;
+}
+
+#ai-chat-form input:focus {
+  outline: none;
+}
+
+#ai-chat-form button {
+  border: none;
+  background: var(--brand-accent);
+  color: #000;
+  padding: 0 1rem;
+  font-weight: 600;
+}
+/* ---------- Arma tu PC ---------- */
+.build-slot {
+  transition: border-color .2s;
+}
+
+.build-slot.is-done {
+  border-color: rgba(212, 175, 55, .6);
+}
+
+.build-slot .card-header {
+  background: rgba(212, 175, 55, .06);
+  border-bottom: 1px solid rgba(212, 175, 55, .15);
+}
+
+.slot-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* Cada opción es un <label> que envuelve un radio/checkbox oculto: el click en la tarjeta lo marca */
+.build-option {
+  display: block;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.build-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  height: 100%;
+  padding: .75rem;
+  border: 1px solid rgba(212, 175, 55, .2);
+  border-radius: .6rem;
+  background: #101010;
+  transition: border-color .15s, background-color .15s;
+}
+
+.build-option:hover .build-card {
+  border-color: rgba(212, 175, 55, .6);
+}
+
+.build-input:checked + .build-card {
+  border-color: var(--brand-accent);
+  background: rgba(212, 175, 55, .1);
+  box-shadow: 0 0 0 1px var(--brand-accent);
+}
+
+.build-input:focus-visible + .build-card {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.build-option.is-out {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+.build-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.build-name {
+  font-weight: 600;
+  line-height: 1.25;
+  padding-right: 1.6rem; /* deja lugar a la tilde de seleccionado */
+}
+
+.build-desc {
+  color: var(--bs-secondary-color);
+  font-size: .8rem;
+  line-height: 1.3;
+  margin-top: .15rem;
+}
+
+.build-check {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: var(--brand-accent);
+  color: #000;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.build-input:checked + .build-card .build-check {
+  display: flex;
+}
+
+.build-none .build-card {
+  align-items: center;
+  color: var(--bs-secondary-color);
+}
+
+/* Resumen: queda fijo al hacer scroll en pantallas grandes */
+@media (min-width: 992px) {
+  .build-summary {
+    position: sticky;
+    top: 1rem;
+  }
+}
